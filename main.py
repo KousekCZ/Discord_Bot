@@ -1,57 +1,60 @@
 import discord
 from discord.ext import commands
 import asyncio
+import datetime
 
 intents = discord.Intents.all()
 intents.presences = True
 intents.messages = True
 bot = commands.Bot(command_prefix='', intents=intents)
 BOT_TOKEN = "MTE2NDU4MjM5MDA2NTI3NDkwMA.GjVjAH.ltObOPH3H3FeOvzwMrTyNKZEZnwGKNnVPu1LNs"
-logging_channel = 1166052490643505222
-error_channel = 1166289752446738462
+log_channel = 1166052490643505222
 
 
 @bot.event
 async def on_ready():
-    target_channel = bot.get_channel(logging_channel)
+    target_channel = bot.get_channel(log_channel)
     try:
         await target_channel.send(f"### ---------- Discord bot {bot.user.name} se připojil na server ----------")
     except Exception as e:
         print(f'Chyba při připojování: {e}')
-        await target_channel.send(f"Chyba při připojování na server: {e}")
 
 
 @bot.event
-async def on_message(message):
+async def on_message(message): # message.author.mention
+    global target_channel
     try:
+        now = datetime.datetime.now()
+        date_time = now.strftime("%Y-%m-%d %H:%M:%S")
+        target_channel = bot.get_channel(log_channel)
+        list_of_commands = ["help", "ahoj", "pingg", "smaž"]
+        command_found = False
+        server = message.guild
 
         if bot.user.mentioned_in(message) and "@everyone" not in message.content:
             content = message.content.lower()
-            commandss = ["help", "ahoj", "pingg", "smaž"]
-            command_notfound = False
 
-            for command in commandss:
+            for command in list_of_commands:
                 if command in content:
-                    command_notfound = True
-                    target_channel = bot.get_channel(logging_channel)
+                    command_found = True
 
                     match command:
                         case "help":
                             await message.channel.send(
                                 '__# Seznam příkazů:__\npro aktivaci napiš @Kusovník [název příkazu]\n\n- help => zobrazí seznam příkazů\n- ahoj => vypíše uvítací zprávu')
-                            await target_channel.send(f"Uživatel {message.author.mention} použil příkaz '{command}'.")
+                            await target_channel.send(f"```diff\n+ {date_time} - Na serveru '{server}' byl použit příkaz '{command}'.\n```")
 
                         case "ahoj":
                             await message.channel.send(f'{message.author.mention} Co mě pinguješ more...')
-                            await target_channel.send(f"Uživatel {message.author.mention} použil příkaz '{command}'.")
+                            await target_channel.send(f"```diff\n+ {date_time} - Na serveru '{server}' byl použit příkaz '{command}'.\n```")
 
                         case "pingg":
                             for i in range(3):
                                 await message.channel.send("@everyone")
-                            await target_channel.send(f"Uživatel {message.author.mention} použil příkaz '{command}'.")
+                            await target_channel.send(f"```diff\n+ {date_time} - Na serveru '{server}' byl použit příkaz '{command}'.\n```")
 
                         case "smaž":
-                            await target_channel.send(f"Uživatel {message.author.mention} použil příkaz '{command}'.")
+                            await target_channel.send(f"```diff\n+ {date_time} - Na serveru '{server}' byl použit příkaz '{command}'.\n```")
                             try:
                                 words = content.split()
                                 smaz_index = words.index("smaž")
@@ -74,11 +77,10 @@ async def on_message(message):
                             except (ValueError, IndexError):
                                 await message.channel.send("Nemohu rozpoznat, kolik zpráv mám smazat.")
 
-            if not command_notfound:
+            if not command_found:
                 await message.channel.send(f"{message.author.mention} tento příkaz neznám..")
     except Exception as e:
-        target_errorChannel = bot.get_channel(error_channel)
-        await target_errorChannel.send(f'Chyba při zpracování zprávy: {e}')
+        await target_channel.send(f"<@!481879980612124703>```diff\n- ERROR: Chyba při zpracování zprávy u příkazu '{command}' na serveru '{server}': {e}\n```")
 
 
 try:
