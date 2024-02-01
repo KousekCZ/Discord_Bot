@@ -8,7 +8,9 @@ intents.presences = True
 intents.messages = True
 bot = commands.Bot(command_prefix='', intents=intents)
 
-BOT_TOKEN = "MTE2NDU4MjM5MDA2NTI3NDkwMA.GjVjAH.ltObOPH3H3FeOvzwMrTyNKZEZnwGKNnVPu1LNs"
+with open("token.txt", "r") as file:
+    BOT_TOKEN = file.read().strip()
+
 log_channel = 1166052490643505222
 nowTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
