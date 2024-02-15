@@ -24,21 +24,32 @@ def get_disk_usage():
     return disk_percent, disk_used_gb, disk_total_gb
 
 
+def get_pagefile_usage():
+    pagefile_usage = psutil.swap_memory().percent
+    pagefile_used_gb = round(psutil.swap_memory().used / (1024 ** 3),
+                             2)  # převést byty na GB s dvěma desetinnými místy
+    pagefile_total_gb = round(psutil.swap_memory().total / (1024 ** 3),
+                              2)  # převést byty na GB s dvěma desetinnými místy
+    return pagefile_usage, pagefile_used_gb, pagefile_total_gb
+
+
 def format_system_info(cpu_percent, total_cpu_percent, ram_percent, ram_used_gb, ram_total_gb, disk_percent,
-                       disk_used_gb, disk_total_gb):
-    cpu_info = "\n".join([f"CPU {i}: {value}%" for i, value in enumerate(cpu_percent)])
-    return f"## Správce úloh\n\r### CPU\n\rCelkové využití CPU: {total_cpu_percent}%\n\r{cpu_info}\n\r### RAM:\n\r{ram_percent}% ({ram_used_gb}GB / {ram_total_gb}GB)\n\r### Disk:\n\r{disk_percent}% ({disk_used_gb}GB / {disk_total_gb}GB)"
+                       disk_used_gb, disk_total_gb, pagefile_usage, pagefile_used_gb, pagefile_total_gb):
+    cpu_info = "\n".join([f"CPU-{i}: {value}%" for i, value in enumerate(cpu_percent)])
+    return f"**Aktuální využití zdrojů:**\n{cpu_info}\nCelková spotřeba CPU: {total_cpu_percent}%\nRAM: {ram_percent}% ({ram_used_gb}GB / {ram_total_gb}GB)\nDisk: {disk_percent}% ({disk_used_gb}GB / {disk_total_gb}GB)\nPagefile: {pagefile_usage}% ({pagefile_used_gb}GB / {pagefile_total_gb}GB)"
 
 
-async def update_usage(bot, channel_id):
-    channel = bot.get_channel(channel_id)
+async def update_usage(client, channel_id):
+    channel = client.get_channel(channel_id)
     message = await channel.send("Načítání...")
 
     while True:
         cpu_percent, total_cpu_percent = get_cpu_usage()
         ram_percent, ram_used_gb, ram_total_gb = get_ram_usage()
         disk_percent, disk_used_gb, disk_total_gb = get_disk_usage()
+        pagefile_usage, pagefile_used_gb, pagefile_total_gb = get_pagefile_usage()
         info_text = format_system_info(cpu_percent, total_cpu_percent, ram_percent, ram_used_gb, ram_total_gb,
-                                       disk_percent, disk_used_gb, disk_total_gb)
+                                       disk_percent, disk_used_gb,
+                                       disk_total_gb, pagefile_usage, pagefile_used_gb, pagefile_total_gb)
         await message.edit(content=info_text)
-        time.sleep(1)
+        time.sleep(0.5)  # Aktualizace každých 0.5 sekundy
