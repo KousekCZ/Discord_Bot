@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from datetime import datetime
 from ServerCommands.ServerCommand import ServerCommands
+from usage import update_usage
 
 intents = discord.Intents.all()
 intents.presences = True
@@ -12,6 +13,7 @@ with open("token.txt", "r") as file:
     BOT_TOKEN = file.read().strip()
 
 log_channel = 1166052490643505222
+usage_channel = 1207749762288451636
 nowTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
@@ -20,6 +22,7 @@ async def on_ready():
     logging_channel = bot.get_channel(log_channel)
     try:
         await logging_channel.send(f"### ---------- Discord bot {bot.user.name} se připojil na server ----------")
+        await update_usage(bot, usage_channel)
     except Exception as e:
         print(f'Chyba při připojování: {e}')
 
