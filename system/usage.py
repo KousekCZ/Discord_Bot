@@ -35,8 +35,8 @@ def get_pagefile_usage():
 
 def format_system_info(cpu_percent, total_cpu_percent, ram_percent, ram_used_gb, ram_total_gb, disk_percent,
                        disk_used_gb, disk_total_gb, pagefile_usage, pagefile_used_gb, pagefile_total_gb):
-    cpu_info = "\n".join([f"CPU-{i}: {value}%" for i, value in enumerate(cpu_percent)])
-    return f"**Aktuální využití zdrojů:**\n{cpu_info}\nCelková spotřeba CPU: {total_cpu_percent}%\nRAM: {ram_percent}% ({ram_used_gb}GB / {ram_total_gb}GB)\nDisk: {disk_percent}% ({disk_used_gb}GB / {disk_total_gb}GB)\nPagefile: {pagefile_usage}% ({pagefile_used_gb}GB / {pagefile_total_gb}GB)"
+    cpu_info = "\n".join([f"CPU {i}: {value}%" for i, value in enumerate(cpu_percent)])
+    return f"## Správce úloh\n### CPU\nCelkové využití CPU: {total_cpu_percent}%\n{cpu_info}\n### RAM:\n{ram_percent}% ({ram_used_gb}GB / {ram_total_gb}GB)\n### Disk:\n{disk_percent}% ({disk_used_gb}GB / {disk_total_gb}GB)\n### Pagefile:\n {pagefile_usage}% ({pagefile_used_gb}GB / {pagefile_total_gb}GB)"
 
 
 async def update_usage(client, channel_id):

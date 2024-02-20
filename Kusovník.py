@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from datetime import datetime
 from ServerCommands.ServerCommand import ServerCommands
-from usage import update_usage
+from system import usage, activity
 
 intents = discord.Intents.all()
 intents.presences = True
@@ -22,7 +22,7 @@ async def on_ready():
     logging_channel = bot.get_channel(log_channel)
     try:
         await logging_channel.send(f"### ---------- Discord bot {bot.user.name} se připojil na server ----------")
-        await update_usage(bot, usage_channel)
+        await usage.update_usage(bot, usage_channel)
     except Exception as e:
         print(f'Chyba při připojování: {e}')
 
@@ -32,7 +32,8 @@ async def on_message(message):
     manageServer = ServerCommands()
     logging_channel = bot.get_channel(log_channel)
     try:
-        await manageServer.ServerCommands(bot, message)
+        await activity.update_activity(bot, logging_channel)
+        await manageServer.ServerCommands(bot, message, nowTime)
         if manageServer.command_found:
             await logging_channel.send(
                 f"```diff\n+ {nowTime} - Na serveru '{message.guild}' byl použit příkaz '{manageServer.match_command}'.\n```")
