@@ -39,17 +39,21 @@ def format_system_info(cpu_percent, total_cpu_percent, ram_percent, ram_used_gb,
     return f"## Správce úloh\n### CPU\nCelkové využití CPU: {total_cpu_percent}%\n{cpu_info}\n### RAM:\n{ram_percent}% ({ram_used_gb}GB / {ram_total_gb}GB)\n### Disk:\n{disk_percent}% ({disk_used_gb}GB / {disk_total_gb}GB)\n### Pagefile:\n {pagefile_usage}% ({pagefile_used_gb}GB / {pagefile_total_gb}GB)"
 
 
-async def update_usage(client, channel_id):
-    channel = client.get_channel(channel_id)
-    message = await channel.send("Načítání...")
+async def update_usage(client, channel_id, logging_channel, nowTime):
+    try:
+        channel = client.get_channel(channel_id)
+        message = await channel.send("Načítání...")
 
-    while True:
-        cpu_percent, total_cpu_percent = get_cpu_usage()
-        ram_percent, ram_used_gb, ram_total_gb = get_ram_usage()
-        disk_percent, disk_used_gb, disk_total_gb = get_disk_usage()
-        pagefile_usage, pagefile_used_gb, pagefile_total_gb = get_pagefile_usage()
-        info_text = format_system_info(cpu_percent, total_cpu_percent, ram_percent, ram_used_gb, ram_total_gb,
-                                       disk_percent, disk_used_gb,
-                                       disk_total_gb, pagefile_usage, pagefile_used_gb, pagefile_total_gb)
-        await message.edit(content=info_text)
-        time.sleep(0.5)  # Aktualizace každých 0.5 sekundy
+        while True:
+            cpu_percent, total_cpu_percent = get_cpu_usage()
+            ram_percent, ram_used_gb, ram_total_gb = get_ram_usage()
+            disk_percent, disk_used_gb, disk_total_gb = get_disk_usage()
+            pagefile_usage, pagefile_used_gb, pagefile_total_gb = get_pagefile_usage()
+            info_text = format_system_info(cpu_percent, total_cpu_percent, ram_percent, ram_used_gb, ram_total_gb,
+                                           disk_percent, disk_used_gb,
+                                           disk_total_gb, pagefile_usage, pagefile_used_gb, pagefile_total_gb)
+            await message.edit(content=info_text)
+            time.sleep(0.5)  # Aktualizace každých 0.5 sekundy
+    except Exception as e:
+        await logging_channel.send(
+            f"<@!481879980612124703>```diff\n- {nowTime} ERROR: Nelze poslat zprávu o využití Rpi 5': {e}\n```")

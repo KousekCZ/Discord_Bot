@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord.ext import commands
 from datetime import datetime
@@ -22,7 +23,10 @@ async def on_ready():
     logging_channel = bot.get_channel(log_channel)
     try:
         await logging_channel.send(f"### ---------- Discord bot {bot.user.name} se připojil na server ----------")
-        await usage.update_usage(bot, usage_channel)
+        await asyncio.gather(
+            activity.update_activity(bot, logging_channel, nowTime),
+            usage.update_usage(bot, usage_channel, logging_channel, nowTime)
+        )
     except Exception as e:
         print(f'Chyba při připojování: {e}')
 
@@ -32,7 +36,6 @@ async def on_message(message):
     manageServer = ServerCommands()
     logging_channel = bot.get_channel(log_channel)
     try:
-        await activity.update_activity(bot, logging_channel, nowTime)
         await manageServer.ServerCommands(bot, message)
         if manageServer.command_found:
             await logging_channel.send(
