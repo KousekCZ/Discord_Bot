@@ -7,7 +7,7 @@ async def update_activity(bot, logging_channel, nowTime):
     try:
         while True:
             current_time = datetime.datetime.now().time()
-            if current_time >= datetime.time(21, 2) or current_time < datetime.time(8, 0):
+            if current_time >= datetime.time(22, 0) or current_time < datetime.time(8, 0):
                 await bot.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game('Spím, tak nečum...'))
             else:
                 await bot.change_presence(status=discord.Status.online, activity=discord.Game('Život je jen hra...'))
