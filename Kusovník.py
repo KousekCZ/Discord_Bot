@@ -32,8 +32,8 @@ async def on_message(message):
     manageServer = ServerCommands()
     logging_channel = bot.get_channel(log_channel)
     try:
-        await activity.update_activity(bot, logging_channel)
-        await manageServer.ServerCommands(bot, message, nowTime)
+        await activity.update_activity(bot, logging_channel, nowTime)
+        await manageServer.ServerCommands(bot, message)
         if manageServer.command_found:
             await logging_channel.send(
                 f"```diff\n+ {nowTime} - Na serveru '{message.guild}' byl použit příkaz '{manageServer.match_command}'.\n```")
