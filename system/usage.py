@@ -39,7 +39,7 @@ def format_system_info(cpu_percent, total_cpu_percent, ram_percent, ram_used_gb,
     return f"## Správce úloh\n### CPU\nCelkové využití CPU: {total_cpu_percent}%\n{cpu_info}\n### RAM:\n{ram_percent}% ({ram_used_gb}GB / {ram_total_gb}GB)\n### Disk:\n{disk_percent}% ({disk_used_gb}GB / {disk_total_gb}GB)\n### Pagefile:\n {pagefile_usage}% ({pagefile_used_gb}GB / {pagefile_total_gb}GB)"
 
 
-async def update_usage(client, channel_id, logging_channel, nowTime):
+async def update_usage(client, channel_id, logging_channel):
     while True:
         try:
             channel = client.get_channel(channel_id)
@@ -57,4 +57,4 @@ async def update_usage(client, channel_id, logging_channel, nowTime):
                 await asyncio.sleep(5)  # Aktualizace každých 0.5 sekundy
         except Exception as e:
             await logging_channel.send(
-                f"<@!481879980612124703>```diff\n- {nowTime} ERROR: Nelze poslat zprávu o využití Rpi 5': {e}\n```")
+                f"<@!481879980612124703>```diff\n- ERROR: Nelze poslat zprávu o využití Rpi 5': {e}\n```")

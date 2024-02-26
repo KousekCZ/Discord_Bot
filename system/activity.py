@@ -3,7 +3,7 @@ import discord
 import datetime
 
 
-async def update_activity(bot, logging_channel, nowTime):
+async def update_activity(bot, logging_channel):
     try:
         while True:
             current_time = datetime.datetime.now().time()
@@ -15,4 +15,4 @@ async def update_activity(bot, logging_channel, nowTime):
 
     except Exception as e:
         await logging_channel.send(
-            f"<@!481879980612124703>```diff\n- {nowTime} ERROR: Chyba ve změně stavu aktivity bota: {e}\n```")
+            f"<@!481879980612124703>```diff\n- ERROR: Chyba ve změně stavu aktivity bota: {e}\n```")
