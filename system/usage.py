@@ -1,5 +1,5 @@
 import psutil
-import time
+import asyncio
 
 
 def get_cpu_usage():
@@ -40,20 +40,21 @@ def format_system_info(cpu_percent, total_cpu_percent, ram_percent, ram_used_gb,
 
 
 async def update_usage(client, channel_id, logging_channel, nowTime):
-    try:
-        channel = client.get_channel(channel_id)
-        message = await channel.send("Načítání...")
+    while True:
+        try:
+            channel = client.get_channel(channel_id)
+            message = await channel.send("Načítání...")
 
-        while True:
-            cpu_percent, total_cpu_percent = get_cpu_usage()
-            ram_percent, ram_used_gb, ram_total_gb = get_ram_usage()
-            disk_percent, disk_used_gb, disk_total_gb = get_disk_usage()
-            pagefile_usage, pagefile_used_gb, pagefile_total_gb = get_pagefile_usage()
-            info_text = format_system_info(cpu_percent, total_cpu_percent, ram_percent, ram_used_gb, ram_total_gb,
-                                           disk_percent, disk_used_gb,
-                                           disk_total_gb, pagefile_usage, pagefile_used_gb, pagefile_total_gb)
-            await message.edit(content=info_text)
-            time.sleep(0.5)  # Aktualizace každých 0.5 sekundy
-    except Exception as e:
-        await logging_channel.send(
-            f"<@!481879980612124703>```diff\n- {nowTime} ERROR: Nelze poslat zprávu o využití Rpi 5': {e}\n```")
+            while True:
+                cpu_percent, total_cpu_percent = get_cpu_usage()
+                ram_percent, ram_used_gb, ram_total_gb = get_ram_usage()
+                disk_percent, disk_used_gb, disk_total_gb = get_disk_usage()
+                pagefile_usage, pagefile_used_gb, pagefile_total_gb = get_pagefile_usage()
+                info_text = format_system_info(cpu_percent, total_cpu_percent, ram_percent, ram_used_gb, ram_total_gb,
+                                               disk_percent, disk_used_gb,
+                                               disk_total_gb, pagefile_usage, pagefile_used_gb, pagefile_total_gb)
+                await message.edit(content=info_text)
+                await asyncio.sleep(5)  # Aktualizace každých 0.5 sekundy
+        except Exception as e:
+            await logging_channel.send(
+                f"<@!481879980612124703>```diff\n- {nowTime} ERROR: Nelze poslat zprávu o využití Rpi 5': {e}\n```")

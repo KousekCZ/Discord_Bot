@@ -11,7 +11,7 @@ async def update_activity(bot, logging_channel, nowTime):
                 await bot.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game('Spím, tak nečum...'))
             else:
                 await bot.change_presence(status=discord.Status.online, activity=discord.Game('Život je jen hra...'))
-            await asyncio.sleep(1)
+            await asyncio.sleep(60)
 
     except Exception as e:
         await logging_channel.send(

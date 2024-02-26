@@ -1,9 +1,12 @@
 import asyncio
+import time
+
 import discord
 from discord.ext import commands
 from datetime import datetime
 from ServerCommands.ServerCommand import ServerCommands
 from system import usage, activity
+import threading
 
 intents = discord.Intents.all()
 intents.presences = True
@@ -15,7 +18,16 @@ with open("token.txt", "r") as file:
 
 log_channel = 1166052490643505222
 usage_channel = 1207749762288451636
-nowTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+nowTime = None
+
+
+def get_time():
+    global nowTime
+    nowTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    time.sleep(1)
+
+
+p1 = threading.Thread(get_time())
 
 
 @bot.event
