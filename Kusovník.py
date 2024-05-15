@@ -16,7 +16,6 @@ log_channel = 1166052490643505222
 usage_channel = 1207749762288451636
 
 
-
 @bot.event
 async def on_ready():
     logging_channel = bot.get_channel(log_channel)

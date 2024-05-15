@@ -1,4 +1,4 @@
-from ServerCommands import FunCommand, PingCommand, DeleteMessageCommand
+from ServerCommands import PingCommand, DeleteMessageCommand
 from GamesCommands import RPS
 
 
@@ -9,7 +9,6 @@ class ServerCommands:
 
         self.commands = {
             "help": (self.HelpCommand, "Zobrazí seznam příkazů."),
-            "ahoj": (FunCommand.FunCommand, "Vypíše uvítací zprávu."),
             "pingg": (PingCommand.PingCommand, "Pingne everyone"),
             "smaž": (DeleteMessageCommand.DeleteMessageCommand, "Smaže zadaný počet zpráv - smaž[počet zpráv]"),
             "rps": (RPS.Rps, "Zahraj si proti Kusovníkovi kámen, nůžky, papír - rps [varianta]")
@@ -25,7 +24,7 @@ class ServerCommands:
                     await self.commands[match_command][0](message)
 
             if not self.command_found:
-                await message.channel.send(f"{message.author.mention} tento příkaz neznám..")
+                await message.channel.send(f"{message.author.mention} Co mě pinguješ more, tento příkaz neznám..")
 
     async def HelpCommand(self, message):
         help_message = "__# Seznam příkazů:__\nPro aktivaci napiš @Kusovník [název příkazu]\n\n"
